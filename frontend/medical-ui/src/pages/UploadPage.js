@@ -5,7 +5,7 @@ import aiLoader from "../assets/gradient loader 01.json";
 import { useNavigate } from "react-router-dom";
 import "./UploadPage.css";
 
-const API_BASE = "http://127.0.0.1:5000";
+const API_BASE = "http://127.0.0.1:8000";
 
 function UploadPage() {
   const [file, setFile] = useState(null);
