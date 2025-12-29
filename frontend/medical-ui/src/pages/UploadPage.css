@@ -1,0 +1,180 @@
+/* Page background */
+.page {
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #fdebd0, #ffffff);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+  font-family: "Inter", sans-serif;
+}
+
+/* Title */
+.title {
+  font-size: 48px;
+  font-weight: 800;
+  background: linear-gradient(90deg, #6a5cff, #ff5fa2, #ffb347);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Subtitle */
+.subtitle {
+  font-size: 20px;
+  color: #555;
+  margin-top: 40px;
+  margin-bottom: 60px;
+  text-align: center;
+}
+
+/* Upload card */
+.upload-card {
+  width: 100%;
+  max-width: 700px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px #aaa;
+  padding: 110px 40px;
+  transition: all 0.2s ease-in-out;
+  text-align: center;
+}
+
+/* Upload icon */
+.upload-icon img {
+  height: 64px;
+  width: 64px;
+  margin-bottom: 10px;
+}
+
+/* Upload button */
+.upload-btn {
+  display: inline-block;
+  background: #ffbf47;
+  color: #000;
+  font-weight: 600;
+  padding: 14px 28px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.upload-btn:hover {
+  background: #f5b000;
+}
+
+/* File name */
+.file-name {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Drag text */
+.drag-text {
+  font-size: 14px;
+  color: #999;
+  margin-top: 6px;
+}
+
+.drag-active {
+  border: 2px dashed #ffbf47;
+  background: #fffaf0;
+}
+
+/* Submit button */
+.submit-btn {
+  margin-top: 20px;
+  padding: 14px 30px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background: #222;
+  color: white;
+}
+
+.submit-btn:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
+/* ===========================
+   PROCESSING OVERLAY
+=========================== */
+
+.processing-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at top, #e9ddff, #fff4ea);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.processing-content {
+  align-items: center;
+  text-align: center;
+  max-width: 500px;
+  padding-bottom: 40px;
+}
+
+/* Text */
+.processing-text {
+  font-size: 20px;
+  color: #444;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+/* Progress bar */
+.progress-bar {
+  height: 2px;
+  width: 100%;
+  background: #e5e5e5;
+  overflow: hidden;
+}
+
+.progress-line {
+  height: 100%;
+  width: 40%;
+  background: linear-gradient(90deg, #ff7eb3, #7f5cff);
+  animation: progressMove 1.8s ease-in-out infinite;
+}
+
+@keyframes progressMove {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(150%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+
+
+/* Result section */
+.result-section {
+  max-width: 900px;
+  margin-top: 50px;
+  width: 100%;
+}
+
+.result-section h2 {
+  margin-bottom: 15px;
+}
+
+/* Summary box */
+.summary-box {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 14px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  line-height: 1.7;
+}

@@ -1,0 +1,6 @@
+CREATE TABLE reports (
+  id SERIAL PRIMARY KEY,
+  filename TEXT,
+  summary TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

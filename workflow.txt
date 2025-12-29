@@ -1,0 +1,13 @@
+Step 1 – Start DB
+(brew, pgadmin, postgresapp)
+
+Step 2 – Start Backend
+
+cd backend
+source venv/bin/activate
+python3 app.py
+
+Step 3 – Start Frontend
+
+cd frontend/medical-ui
+npm start

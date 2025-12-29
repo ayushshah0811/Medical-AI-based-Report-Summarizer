@@ -1,0 +1,111 @@
+.summary-page {
+    min-height: 100vh;
+    background: radial-gradient(circle at top, #fdebd0, #ffffff);
+    display: flex;
+    justify-content: center;
+    padding: 60px 20px;
+  }
+  
+  .summary-card {
+    background: white;
+    max-width: 900px;
+    width: 100%;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+  }
+  
+  .report-title {
+    font-size: 28px;
+    margin-bottom: 10px;
+  }
+  
+  .report-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+  }
+  
+  .summary-content {
+    line-height: 1.8;
+    font-size: 15px;
+  }
+  
+  .summary-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 14px;
+  }
+  
+  .summary-content th,
+  .summary-content td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .summary-content th {
+    background-color: #f3f6fb;
+    font-weight: 600;
+  }
+  
+  .summary-content tr:nth-child(even) {
+    background-color: #fafafa;
+  }
+  
+  #pdf-content {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    color: #000;
+  }
+  
+  #pdf-content h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+/* Right panel */
+.download-panel {
+    width: 300px;
+    display: flex;
+    justify-content: center;
+    border-radius: 12px;
+    align-items: flex-start;
+    margin-left: 80px;
+    background: white;
+    position: sticky;
+    top: 24px;
+  }
+  
+  /* Download button (matches screenshot) */
+  .download-btn {
+    width: 80%;
+    background-color: #ffc94b;
+    color: #000;
+    border: none;
+    border-radius: 12px;
+    padding: 14px 20px;
+    margin-top: 40px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  
+  /* Hover effect */
+  .download-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+  }
+  
+  /* Disabled state */
+  .download-btn:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  
