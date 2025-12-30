@@ -25,7 +25,8 @@ frontend/medical-ui/build/
 # Environment variables
 *.env
 backend/.env
-
+frontend/medical-ui/.env.development
+frontend/medical-ui/.env.production
 # production
 /build
 

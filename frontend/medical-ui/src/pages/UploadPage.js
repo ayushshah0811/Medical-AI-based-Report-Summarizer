@@ -5,7 +5,7 @@ import aiLoader from "../assets/gradient loader 01.json";
 import { useNavigate } from "react-router-dom";
 import "./UploadPage.css";
 
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = process.env.REACT_APP_API_URL;
 
 function UploadPage() {
   const [file, setFile] = useState(null);
@@ -24,25 +24,25 @@ function UploadPage() {
     formData.append("file", file);
   
     try {
-      setProcessing(true);   // 👈 SHOW PROCESSING SCREEN
-      setLoading(true);
+      setLoading(true); // only disable button / show spinner
   
       const res = await axios.post(`${API_BASE}/upload`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
   
       const reportId = res.data.report_id;
-
+  
+      setProcessing(true); 
+  
       setTimeout(() => {
         setProcessing(false);
         navigate(`/summary/${reportId}`);
       }, 6000);
-
+  
     } catch (err) {
-      alert("Upload failed. Please try again.");
       console.error(err);
-    } 
-    finally {
+      alert("Upload failed. Please try again.");
+    } finally {
       setLoading(false);
     }
   };

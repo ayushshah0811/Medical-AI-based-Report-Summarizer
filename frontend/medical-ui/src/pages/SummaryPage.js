@@ -6,7 +6,7 @@ import html2pdf from "html2pdf.js"
 import remarkGfm from "remark-gfm";
 import "./SummaryPage.css";
 
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = process.env.REACT_APP_API_URL;
 
 function SummaryPage() {
   const { id } = useParams();
