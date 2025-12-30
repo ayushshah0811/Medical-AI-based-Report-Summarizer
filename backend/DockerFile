@@ -4,16 +4,17 @@ FROM python:3.11-slim
 RUN apt-get update && apt-get install -y \
     tesseract-ocr \
     poppler-utils \
+    libgl1 \
     && rm -rf /var/lib/apt/lists/*
 
-# Set workdir
 WORKDIR /app
 
-# Copy files
-COPY . .
-
-# Install Python dependencies
+# Install Python deps first (better caching)
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Run app
-CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:10000"]
+# Copy app code
+COPY . .
+
+# IMPORTANT: Render provides PORT
+CMD ["gunicorn", "-b", "0.0.0.0:$PORT", "app:app"]
