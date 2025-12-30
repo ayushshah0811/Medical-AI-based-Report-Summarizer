@@ -16,7 +16,7 @@ COPY . .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Expose port
-EXPOSE 5000
+ENV PORT = 10000
 
 # Run app
-CMD ["python", "app.py"]
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:$PORT"]
