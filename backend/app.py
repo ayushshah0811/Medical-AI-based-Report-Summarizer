@@ -13,6 +13,10 @@ from ocr import extract_text
 load_dotenv()
 app = Flask(__name__)
 CORS(app)                # Simple global CORS
+
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)   
+
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))        
 
 # ---------------------------------------
@@ -43,7 +47,7 @@ def upload():
 
     # Save file
     filename = secure_filename(file.filename)
-    filepath = os.path.join("uploads", filename)
+    filepath = os.path.join(UPLOAD_FOLDER, filename)
     file.save(filepath)
 
     # ---------------------------------------
