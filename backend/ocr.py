@@ -10,7 +10,7 @@ def extract_text_from_pdf(pdf_path):
     pages = convert_from_path(pdf_path)
     full_text = ""
     for page in pages:
-        text = pytesseract.image_to_string(page)
+        text = pytesseract.image_to_string(page, config="--psm 6")
         full_text += text + "\n"
     return full_text
 
