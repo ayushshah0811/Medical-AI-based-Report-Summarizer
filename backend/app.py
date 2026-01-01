@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from groq import Groq
 from ocr import extract_text
+from urllib.parse import urlparse
 
 # ---------------------------------------
 # APP SETUP
@@ -23,12 +24,20 @@ client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 # DATABASE CONNECTION
 # ---------------------------------------
 def get_db_connection():
+    database_url = os.environ.get("DATABASE_URL")
+    if not database_url:
+        raise RuntimeError("DATABASE_URL not set")
+
+    url = urlparse(database_url)
+
     return psycopg2.connect(
-        host="localhost",
-        database="medical_reports",
-        user="ayushshah",
-        password="08112003"   # update this
-    )
+        dbname=url.path[1:],
+        user=url.username,
+        password=url.password,
+        host=url.hostname,
+        port=url.port,
+        sslmode="require"
+    ) 
 
 @app.route("/ping")
 def ping():
