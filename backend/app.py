@@ -62,7 +62,10 @@ def upload():
     # ---------------------------------------
     # OCR → RAW TEXT
     # ---------------------------------------
-    raw_text = extract_text(filepath)
+    try:
+        raw_text = extract_text(filepath)
+    except Exception as e:
+        raw_text = ""
 
     # ---------------------------------------
     # AI SUMMARY (ChatGPT-style, fully autonomous)
