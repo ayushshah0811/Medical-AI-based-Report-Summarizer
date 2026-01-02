@@ -14,31 +14,56 @@ function UploadPage() {
   const [processing, setProcessing] = useState(false);
   const navigate = useNavigate();
 
+  // ----------------------------
+  // POLLING FUNCTION
+  // ----------------------------
+  const pollJobStatus = async (jobId) => {
+    try {
+      const res = await axios.get(`${API_BASE}/status/${jobId}`);
+      const data = res.data;
+
+      if (data.status === "done") {
+        setProcessing(false);
+        navigate(`/summary/${data.report_id}`);
+      } 
+      else if (data.status === "error") {
+        setProcessing(false);
+        alert("Processing failed. Please try again.");
+      } 
+      else {
+        // still processing
+        setTimeout(() => pollJobStatus(jobId), 3000);
+      }
+    } catch (err) {
+      console.error(err);
+      setTimeout(() => pollJobStatus(jobId), 5000);
+    }
+  };
+
+  // ----------------------------
+  // UPLOAD HANDLER
+  // ----------------------------
   const handleUpload = async () => {
     if (!file) {
       alert("Please upload a valid report first.");
       return;
     }
-  
+
     const formData = new FormData();
     formData.append("file", file);
-  
+
     try {
-      setLoading(true); // only disable button / show spinner
-  
+      setLoading(true);
+
       const res = await axios.post(`${API_BASE}/upload`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-  
-      const reportId = res.data.report_id;
-  
-      setProcessing(true); 
-  
-      setTimeout(() => {
-        setProcessing(false);
-        navigate(`/summary/${reportId}`);
-      }, 6000);
-  
+
+      const jobId = res.data.job_id;
+
+      setProcessing(true);
+      pollJobStatus(jobId);
+
     } catch (err) {
       console.error(err);
       alert("Upload failed. Please try again.");
@@ -46,8 +71,10 @@ function UploadPage() {
       setLoading(false);
     }
   };
-  
-  // Drag handlers
+
+  // ----------------------------
+  // DRAG HANDLERS (UNCHANGED)
+  // ----------------------------
   const handleDragOver = (e) => {
     e.preventDefault();
     setDragActive(true);
@@ -67,15 +94,16 @@ function UploadPage() {
     }
   };
 
+  // ----------------------------
+  // UI (UNCHANGED)
+  // ----------------------------
   return (
     <div className="page">
-      {/* HEADER */}
       <h1 className="title">MediDigest : AI Medical Report Summarizer</h1>
       <p className="subtitle">
         Get a summary of medical reports in seconds, read faster and understand better
       </p>
 
-      {/* UPLOAD CARD */}
       <div
         className={`upload-card ${dragActive ? "drag-active" : ""}`}
         onDragOver={handleDragOver}
@@ -110,26 +138,18 @@ function UploadPage() {
         </button>
       </div>
 
-      {/* RESULT */}
       {processing && (
         <div className="processing-overlay">
           <div className="processing-content">
-
-            <Lottie
-            animationData={aiLoader}
-            loop={true}
-            />
-
+            <Lottie animationData={aiLoader} loop />
             <p className="processing-text">
               Generating a summary typically takes about 1 minute.
               <br />
               Please don’t close this window.
             </p>
-
             <div className="progress-bar">
               <div className="progress-line" />
             </div>
-
           </div>
         </div>
       )}
