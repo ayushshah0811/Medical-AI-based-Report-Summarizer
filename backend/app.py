@@ -1,4 +1,6 @@
 import os
+import uuid
+import threading
 import psycopg2
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -6,144 +8,163 @@ from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from groq import Groq
 from ocr import extract_text
-from urllib.parse import urlparse
 
 # ---------------------------------------
 # APP SETUP
 # ---------------------------------------
 load_dotenv()
+
 app = Flask(__name__)
-CORS(app)                # Simple global CORS
+CORS(app)
 
 UPLOAD_FOLDER = "uploads"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)   
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))        
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 # ---------------------------------------
-# DATABASE CONNECTION
+# JOB STORE (IN-MEMORY)
+# ---------------------------------------
+jobs = {}
+# jobs[job_id] = {
+#   "status": "processing" | "done" | "error",
+#   "report_id": None,
+#   "error": None
+# }
+
+# ---------------------------------------
+# DATABASE CONNECTION (RENDER SAFE)
 # ---------------------------------------
 def get_db_connection():
-    database_url = os.environ.get("DATABASE_URL")
-    if not database_url:
-        raise RuntimeError("DATABASE_URL not set")
+    return psycopg2.connect(os.getenv("DATABASE_URL"))
 
-    url = urlparse(database_url)
-
-    return psycopg2.connect(
-        dbname=url.path[1:],
-        user=url.username,
-        password=url.password,
-        host=url.hostname,
-        port=url.port,
-        sslmode="require"
-    ) 
-
+# ---------------------------------------
+# HEALTH CHECK
+# ---------------------------------------
 @app.route("/ping")
 def ping():
     return {"message": "Backend is working!"}
 
-@app.route("/upload", methods=["POST"])
-def upload():
-    # Ensure file exists
-    if "file" not in request.files:
-        return jsonify({"error": "No file part in request"}), 400
-
-    file = request.files["file"]
-
-    if file.filename == "":
-        return jsonify({"error": "No file selected"}), 400
-
-    # Save file
-    filename = secure_filename(file.filename)
-    filepath = os.path.join(UPLOAD_FOLDER, filename)
-    file.save(filepath)
-
-    # ---------------------------------------
-    # OCR → RAW TEXT
-    # ---------------------------------------
+# ---------------------------------------
+# BACKGROUND PROCESSOR
+# ---------------------------------------
+def process_document(job_id, filepath, filename):
     try:
+        # OCR
         raw_text = extract_text(filepath)
+
+        # AI summary
+        summary = generate_summary(raw_text)
+
+        # Save to DB
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            INSERT INTO reports (filename, summary)
+            VALUES (%s, %s)
+            RETURNING id
+            """,
+            (filename, summary)
+        )
+        report_id = cur.fetchone()[0]
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        jobs[job_id]["status"] = "done"
+        jobs[job_id]["report_id"] = report_id
+
     except Exception as e:
-        raw_text = ""
-
-    # ---------------------------------------
-    # AI SUMMARY (ChatGPT-style, fully autonomous)
-    # ---------------------------------------
-    summary = generate_summary(raw_text)
-
-    # ---------------------------------------
-    # SAVE TO DATABASE
-    # ---------------------------------------
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute(
-        """
-        INSERT INTO reports (filename, summary)
-        VALUES (%s, %s)
-        RETURNING id
-        """,
-        (filename, summary)
-    )
-    report_id = cur.fetchone()[0]
-    conn.commit()
-    cur.close()
-    conn.close()
-
-    # ---------------------------------------
-    # RESPONSE
-    # ---------------------------------------
-    return jsonify({
-        "message": "File processed successfully",
-        "filename": filename,
-        "path": filepath,
-        "summary": summary,
-        "report_id": report_id
-    })
-
+        jobs[job_id]["status"] = "error"
+        jobs[job_id]["error"] = str(e)
 
 # ---------------------------------------
-# GPT-BASED SMART MEDICAL SUMMARY
+# UPLOAD (FAST RESPONSE)
+# ---------------------------------------
+@app.route("/upload", methods=["POST"])
+def upload():
+    if "file" not in request.files:
+        return jsonify({"error": "No file uploaded"}), 400
+
+    file = request.files["file"]
+    if file.filename == "":
+        return jsonify({"error": "Empty filename"}), 400
+
+    filename = secure_filename(file.filename)
+    job_id = str(uuid.uuid4())
+    filepath = os.path.join(UPLOAD_FOLDER, f"{job_id}_{filename}")
+
+    file.save(filepath)
+
+    jobs[job_id] = {
+        "status": "processing",
+        "report_id": None,
+        "error": None
+    }
+
+    thread = threading.Thread(
+        target=process_document,
+        args=(job_id, filepath, filename),
+        daemon=True
+    )
+    thread.start()
+
+    return jsonify({
+        "job_id": job_id,
+        "status": "processing"
+    })
+
+# ---------------------------------------
+# JOB STATUS (POLLING)
+# ---------------------------------------
+@app.route("/status/<job_id>")
+def job_status(job_id):
+    job = jobs.get(job_id)
+    if not job:
+        return jsonify({"error": "Invalid job id"}), 404
+    return jsonify(job)
+
+# ---------------------------------------
+# GPT-BASED MEDICAL SUMMARY
 # ---------------------------------------
 def generate_summary(raw_text):
     prompt = f"""
 You are a highly skilled medical expert.
 
 Below is the OCR-extracted medical report. Generate a fully autonomous medical summary.
-You decide the structure, tone, and format — do NOT follow templates or fixed sections.
+You decide the structure, tone, and format — do NOT follow templates.
 
 Focus on:
-- interpreting key abnormalities
+- interpreting abnormalities
 - medical reasoning
-- explaining relevance in simple language
-- giving natural, human-like summaries
+- explaining relevance simply
 
 OCR TEXT:
 {raw_text}
 """
 
-    try:
-        response = client.chat.completions.create(
-            model="groq/compound",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.3,
-            max_tokens=2000
-        )
+    response = client.chat.completions.create(
+        model="groq/compound",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.3,
+        max_tokens=2000
+    )
 
-        return response.choices[0].message.content
-
-    except Exception as e:
-        return f"AI summary unavailable due to error: {str(e)}"
-
+    return response.choices[0].message.content
 
 # ---------------------------------------
-# GET LIST OF REPORTS
+# REPORT LIST
 # ---------------------------------------
-@app.route("/reports", methods=["GET"])
+@app.route("/reports")
 def get_reports():
     conn = get_db_connection()
     cur = conn.cursor()
-    cur.execute("SELECT id, filename, created_at FROM reports ORDER BY created_at DESC;")
+    cur.execute("""
+        SELECT id, filename, created_at
+        FROM reports
+        ORDER BY created_at DESC
+    """)
     rows = cur.fetchall()
     cur.close()
     conn.close()
@@ -153,11 +174,10 @@ def get_reports():
         for r in rows
     ])
 
-
 # ---------------------------------------
-# GET SINGLE REPORT DETAILS
+# SINGLE REPORT
 # ---------------------------------------
-@app.route("/report/<int:rid>", methods=["GET"])
+@app.route("/report/<int:rid>")
 def get_report(rid):
     conn = get_db_connection()
     cur = conn.cursor()
@@ -179,11 +199,3 @@ def get_report(rid):
         "summary": row[2],
         "created_at": row[3]
     })
-
-
-# ---------------------------------------
-# RUN SERVER
-# ---------------------------------------
-if __name__ == "__main__":
-    os.makedirs("uploads", exist_ok=True)
-    app.run(debug=True)
