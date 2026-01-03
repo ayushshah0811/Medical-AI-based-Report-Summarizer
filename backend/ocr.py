@@ -8,15 +8,26 @@ def extract_text_from_image(image_path):
     except:
         return ""
 
-def extract_text_from_pdf(pdf_path):
-    try:
-        pages = convert_from_path(pdf_path, dpi=120)  # ⚡ optimized
-        text = ""
-        for page in pages:
-            text += pytesseract.image_to_string(page, config="--psm 6") + "\n"
-        return text
-    except:
-        return ""
+def extract_text_from_pdf(filepath):
+    images = convert_from_path(filepath)
+    extracted_text = []
+
+    for page in images[:6]:
+        page = page.convert("L")
+        page = page.resize(
+            (page.width // 2, page.height // 2)
+        )
+
+        extracted_text.append(
+            pytesseract.image_to_string(
+                page,
+                config="--oem 1 --psm 6"
+            )
+        )
+
+        del page
+
+    return "\n".join(extracted_text)
 
 def extract_text(filepath):
     ext = filepath.split(".")[-1].lower()
