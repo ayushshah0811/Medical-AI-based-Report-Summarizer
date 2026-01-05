@@ -132,20 +132,17 @@ def generate_summary(raw_text):
     prompt = f"""
 You are a highly skilled medical expert.
 
-Below is the OCR-extracted medical report. Generate a fully autonomous medical summary.
-You decide the structure, tone, and format — do NOT follow templates.
+Below is the OCR-extracted medical report. Analyze this report and create a summary.
 
-Focus on:
-- interpreting abnormalities
-- medical reasoning
-- explaining relevance simply
+You decide the structure, tone, and format — do NOT follow templates.
+Focus on: abnormal findings, clinical reasoning, simple patient explanations, immediate next steps, and daily lifestyle dos/don'ts.
 
 OCR TEXT:
 {raw_text}
 """
 
     response = client.chat.completions.create(
-        model="groq/compound",
+        model="openai/gpt-oss-120b",
         messages=[{"role": "user", "content": prompt}],
         temperature=0.3,
         max_tokens=2000
