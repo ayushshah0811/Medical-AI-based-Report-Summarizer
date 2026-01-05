@@ -49,6 +49,17 @@ function UploadPage() {
       return;
     }
 
+    const ALLOWED_TYPES = [
+      "application/pdf",
+      "image/png",
+      "image/jpeg"
+    ];
+  
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      alert("Please upload a PDF, PNG, or JPG/JPEG file only.");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("file", file);
 
