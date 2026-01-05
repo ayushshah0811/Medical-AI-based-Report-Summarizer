@@ -48,6 +48,14 @@ def ping():
 # ---------------------------------------
 # BACKGROUND PROCESSOR
 # ---------------------------------------
+ALLOWED_EXTENSIONS = {"pdf", "png", "jpg", "jpeg"}
+
+def allowed_file(filename):
+    return (
+        "." in filename and
+        filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
+    )
+
 def process_document(job_id, filepath, filename):
     try:
         # OCR
@@ -92,6 +100,11 @@ def upload():
         return jsonify({"error": "Empty filename"}), 400
 
     filename = secure_filename(file.filename)
+
+    if not allowed_file(filename):
+        return jsonify({
+            "error": "Invalid file type. Only PDF, PNG, JPG, and JPEG are allowed."
+        }), 400
     job_id = str(uuid.uuid4())
     filepath = os.path.join(UPLOAD_FOLDER, f"{job_id}_{filename}")
 
