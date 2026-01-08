@@ -5,8 +5,42 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 60px 20px;
+  padding: 30px 20px;
   font-family: "Inter", sans-serif;
+}
+
+.top-bar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 24px;
+}
+
+.auth-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.auth-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+}
+
+.auth-btn.primary {
+  background-color: #4f46e5;
+  color: white;
+}
+
+.auth-btn.secondary {
+  background-color: transparent;
+  color: #4f46e5;
+  border: 1px solid #4f46e5;
+}
+
+.auth-btn:hover {
+  opacity: 0.9;
 }
 
 /* Title */
@@ -25,7 +59,6 @@
 .subtitle {
   font-size: 20px;
   color: #555;
-  margin-top: 40px;
   margin-bottom: 60px;
   text-align: center;
 }

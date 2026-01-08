@@ -13,6 +13,8 @@ function UploadPage() {
   const [dragActive, setDragActive] = useState(false);
   const [processing, setProcessing] = useState(false);
   const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  const isLoggedIn = Boolean(token);
 
   // ----------------------------
   // POLLING FUNCTION
@@ -24,7 +26,7 @@ function UploadPage() {
 
       if (data.status === "done") {
         setProcessing(false);
-        navigate(`/summary/${data.report_id}`);
+        navigate(`/public/report/${data.public_id}`);
       } 
       else if (data.status === "error") {
         setProcessing(false);
@@ -110,6 +112,48 @@ function UploadPage() {
   // ----------------------------
   return (
     <div className="page">
+
+      <div className="top-bar">
+        <div className="auth-actions">
+          {!isLoggedIn ? (
+            <>
+              <button
+                className="auth-btn secondary"
+                onClick={() => navigate("/login")}
+              >
+                Login
+              </button>
+
+              <button
+                className="auth-btn primary"
+                onClick={() => navigate("/signup")}
+              >
+                Sign up
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                className="auth-btn secondary"
+                onClick={() => navigate("/history")}
+              >
+                History
+              </button>
+
+              <button
+                className="auth-btn primary"
+                onClick={() => {
+                  localStorage.removeItem("token");
+                  navigate("/");
+                }}
+              >
+                Logout
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+
       <h1 className="title">MediDigest : AI Medical Report Summarizer</h1>
       <p className="subtitle">
         Get a summary of medical reports in seconds, read faster and understand better
