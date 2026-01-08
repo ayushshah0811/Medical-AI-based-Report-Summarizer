@@ -10,3 +10,5 @@ psycopg2-binary
 groq
 gunicorn
 pdfminer.six
+bcrypt
+pyjwt
