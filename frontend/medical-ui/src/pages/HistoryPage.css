@@ -1,0 +1,139 @@
+/* ===============================
+   History Page – Isolated Styles
+   =============================== */
+
+.history-page {
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 60px 20px;
+
+  /* Same cinematic background as rest of app */
+  background:
+    radial-gradient(
+      800px 600px at 85% 15%,
+      rgba(124, 92, 255, 0.45),
+      transparent 65%
+    ),
+    radial-gradient(
+      900px 700px at 15% 35%,
+      rgba(0, 92, 255, 0.35),
+      transparent 70%
+    ),
+    linear-gradient(
+      135deg,
+      #05081f 0%,
+      #0b1236 35%,
+      #11184a 60%,
+      #070b26 100%
+    );
+
+  color: #ffffff;
+}
+
+/* Page heading */
+.page > h2 {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+/* Empty state */
+.page > p {
+  font-size: 16px;
+  opacity: 0.8;
+}
+
+/* ===============================
+   History List Container
+   =============================== */
+
+.history-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  width: 100%;
+  max-width: 900px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ===============================
+   History Item (Card Style)
+   =============================== */
+
+.history-list li {
+  padding: 18px 22px;
+
+  border-radius: 16px;
+
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.25),
+    0 12px 30px rgba(0, 0, 0, 0.35);
+
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+/* Hover effect */
+.history-list li:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.1);
+
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.35),
+    0 18px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* ===============================
+   Filename
+   =============================== */
+
+.history-list li strong {
+  display: block;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===============================
+   Date / Time
+   =============================== */
+
+.history-list li small {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* ===============================
+   Responsive
+   =============================== */
+
+@media (max-width: 600px) {
+  .page > h2 {
+    font-size: 26px;
+  }
+
+  .history-list li {
+    padding: 16px 18px;
+  }
+}

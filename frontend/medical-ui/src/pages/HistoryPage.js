@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "./HistoryPage.css"
 
 const API_BASE = process.env.REACT_APP_API_URL;
 
@@ -29,7 +30,7 @@ function HistoryPage() {
   }, [navigate]);
 
   return (
-    <div className="page">
+    <div className="history-page">
       <h2>Your Saved Summaries</h2>
 
       {reports.length === 0 && (
@@ -45,7 +46,7 @@ function HistoryPage() {
           >
             <strong>{r.filename}</strong>
             <br />
-            <small>{new Date(r.created_at).toLocaleString()}</small>
+            <small>{new Date(r.created_at).toISOString()}</small>
           </li>
         ))}
       </ul>

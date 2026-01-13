@@ -117,6 +117,7 @@ function SummaryPage() {
 
   return (
     <div className="summary-page">
+      <div className="summary-layout">
       <div id="summary-card" className="summary-card">
         <h1 className="report-title">
           Medical Report Summary
@@ -138,7 +139,7 @@ function SummaryPage() {
 
         <div className="download-panel">
         {publicId && (
-        <button onClick={handleSave}>
+        <button className="save-btn"onClick={handleSave}>
           Save this summary
         </button>
         )}
@@ -149,7 +150,18 @@ function SummaryPage() {
         disabled={!report.summary}>
         ⬇ Download
         </button>
-        </div>    
+
+        {/* Spacer pushes Home button to bottom */}
+          <div className="panel-spacer" />
+
+        <button
+          className="home-btn"
+          onClick={() => navigate("/")}
+        >
+          ⌂ Home
+        </button>
+        </div> 
+      </div>   
     </div>
   );
 }

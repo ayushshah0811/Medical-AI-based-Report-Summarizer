@@ -72,7 +72,7 @@ function LoginPage() {
     <div className="login-container">
 
       <div className="login-header">
-        <h1 className="logo-text">
+        <h1 className="logo-login">
           MediDigest :  AI Medical Report Summarizer
         </h1>
       </div>

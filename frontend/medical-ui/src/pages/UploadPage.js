@@ -27,13 +27,10 @@ function UploadPage() {
       if (data.status === "done") {
         setProcessing(false);
         navigate(`/public/report/${data.public_id}`);
-      } 
-      else if (data.status === "error") {
+      } else if (data.status === "error") {
         setProcessing(false);
         alert("Processing failed. Please try again.");
-      } 
-      else {
-        // still processing
+      } else {
         setTimeout(() => pollJobStatus(jobId), 3000);
       }
     } catch (err) {
@@ -51,12 +48,8 @@ function UploadPage() {
       return;
     }
 
-    const ALLOWED_TYPES = [
-      "application/pdf",
-      "image/png",
-      "image/jpeg"
-    ];
-  
+    const ALLOWED_TYPES = ["application/pdf", "image/png", "image/jpeg"];
+
     if (!ALLOWED_TYPES.includes(file.type)) {
       alert("Please upload a PDF, PNG, or JPG/JPEG file only.");
       return;
@@ -69,14 +62,13 @@ function UploadPage() {
       setLoading(true);
 
       const res = await axios.post(`${API_BASE}/upload`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
+        headers:  { "Content-Type": "multipart/form-data" },
       });
 
       const jobId = res.data.job_id;
 
       setProcessing(true);
       pollJobStatus(jobId);
-
     } catch (err) {
       console.error(err);
       alert("Upload failed. Please try again.");
@@ -86,7 +78,7 @@ function UploadPage() {
   };
 
   // ----------------------------
-  // DRAG HANDLERS (UNCHANGED)
+  // DRAG HANDLERS
   // ----------------------------
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -107,25 +99,35 @@ function UploadPage() {
     }
   };
 
+  const handleFileSelect = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+    }
+  };
+
   // ----------------------------
-  // UI (UNCHANGED)
+  // UI
   // ----------------------------
   return (
     <div className="page">
+      {/* Navigation Bar */}
+      <nav className="navbar">
+        <div className="nav-brand">
+            <img src="/logo.png" className="logo" alt="MediDigest Logo"/>
+          <span className="brand-name">MediDigest</span>
+        </div>
 
-      <div className="top-bar">
-        <div className="auth-actions">
-          {!isLoggedIn ? (
+        <div className="nav-actions">
+          {! isLoggedIn ?  (
             <>
               <button
-                className="auth-btn secondary"
+                className="nav-btn outline"
                 onClick={() => navigate("/login")}
               >
                 Login
               </button>
-
               <button
-                className="auth-btn primary"
+                className="nav-btn outline"
                 onClick={() => navigate("/signup")}
               >
                 Sign up
@@ -134,14 +136,13 @@ function UploadPage() {
           ) : (
             <>
               <button
-                className="auth-btn secondary"
+                className="nav-btn outline"
                 onClick={() => navigate("/history")}
               >
                 History
               </button>
-
               <button
-                className="auth-btn primary"
+                className="nav-btn outline"
                 onClick={() => {
                   localStorage.removeItem("token");
                   navigate("/");
@@ -152,47 +153,58 @@ function UploadPage() {
             </>
           )}
         </div>
+      </nav>
+
+      {/* Hero Section */}
+      <div className="hero-section">
+      <h1 class="hero-title">
+        MediDigest : AI Medical Report Summarizer
+      </h1>
+        <p className="hero-subtitle">
+          Get a summary of medical reports in seconds, read faster and understand better
+        </p>
       </div>
 
-      <h1 className="title">MediDigest : AI Medical Report Summarizer</h1>
-      <p className="subtitle">
-        Get a summary of medical reports in seconds, read faster and understand better
-      </p>
-
+      {/* Upload Card */}
       <div
         className={`upload-card ${dragActive ? "drag-active" : ""}`}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
+        {/* Cloud Upload Icon */}
         <div className="upload-icon">
           <img src="/upload-cloud-icon.svg" alt="Upload file" />
         </div>
 
-        <input
-          type="file"
-          id="fileInput"
-          hidden
-          onChange={(e) => setFile(e.target.files[0])}
-        />
-
-        <label htmlFor="fileInput" className="upload-btn">
+        {/* Upload Button */}
+        <label className="upload-btn">
           Upload Document
+          <input
+            type="file"
+            accept=".pdf,.png,.jpg,.jpeg"
+            onChange={handleFileSelect}
+            hidden
+          />
         </label>
 
-        {file && <p className="file-name">{file.name}</p>}
-
+        {/* Drag Text */}
         <p className="drag-text">or Drag file here</p>
 
+        {/* File Name Display */}
+        {file && <p className="file-name">{file.name}</p>}
+
+        {/* Generate Summary Button */}
         <button
           className="submit-btn"
           onClick={handleUpload}
-          disabled={loading}
+          disabled={loading || ! file}
         >
-          {loading ? "Processing..." : "Generate Summary"}
+          {loading ? "Uploading..." : "Generate Summary"}
         </button>
       </div>
 
+      {/* Processing Overlay */}
       {processing && (
         <div className="processing-overlay">
           <div className="processing-content">

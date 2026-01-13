@@ -1,18 +1,62 @@
 .summary-page {
     min-height: 100vh;
-    background: radial-gradient(circle at top, #fdebd0, #ffffff);
+    background:
+    /* Strong purple glow (top-right) */
+    radial-gradient(
+      800px 600px at 85% 15%,
+      rgba(124, 92, 255, 0.45),
+      transparent 65%
+    ),
+
+    /* Blue sweep from left */
+    radial-gradient(
+      900px 700px at 15% 35%,
+      rgba(0, 92, 255, 0.35),
+      transparent 70%
+    ),
+
+    /* Dark depth at bottom */
+    radial-gradient(
+      800px 500px at 50% 100%,
+      rgba(5, 10, 40, 0.9),
+      transparent 70%
+    ),
+
+    /* Base cinematic gradient */
+    linear-gradient(
+      135deg,
+      #05081f 0%,
+      #0b1236 35%,
+      #11184a 60%,
+      #070b26 100%
+    );
     display: flex;
     justify-content: center;
     padding: 60px 20px;
+    overflow-x: hidden;
   }
   
+  .summary-layout {
+    position: relative;
+    width: 100%;
+    max-width: 1300px;
+  
+    display: flex;
+    align-items: flex-start;
+  }
+
   .summary-card {
-    background: white;
-    max-width: 900px;
+    background: rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);    max-width: 900px;
     width: 100%;
     padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+    border-radius: 22px;
+    box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.35),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.12),
+    0 30px 70px rgba(0, 0, 0, 0.45);
+    color: white;  
   }
   
   .report-title {
@@ -24,7 +68,7 @@
     display: flex;
     gap: 20px;
     font-size: 14px;
-    color: #666;
+    color: #ffffff;
     margin-bottom: 20px;
   }
   
@@ -48,12 +92,7 @@
   }
   
   .summary-content th {
-    background-color: #f3f6fb;
     font-weight: 600;
-  }
-  
-  .summary-content tr:nth-child(even) {
-    background-color: #fafafa;
   }
   
   #pdf-content {
@@ -69,36 +108,76 @@
   
 /* Right panel */
 .download-panel {
-    width: 300px;
-    display: flex;
-    justify-content: center;
-    border-radius: 12px;
-    align-items: flex-start;
-    margin-left: 80px;
-    background: white;
-    position: sticky;
-    top: 24px;
-  }
+  width: 250px;
+  height: 600px;
+  margin-left: 80px;
+  left: calc(40% + 460px);
+  position: fixed;
+  right: 80px; 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px; /* controls vertical spacing between buttons */
+
+  padding: 32px 24px;
+
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+
+  border: 1px solid rgba(255, 255, 255, 0.22);
+
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.35),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.12),
+    0 30px 70px rgba(0, 0, 0, 0.45);
+}
+
+.save-btn {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.85);
+  color: #000;
+
+  border: none;
+  border-radius: 12px;
+
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.save-btn:hover {
+  transform: translateY(-1px);
+}
+
   
   /* Download button (matches screenshot) */
   .download-btn {
-    width: 80%;
-    background-color: #ffc94b;
-    color: #000;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.85);    color: #000;
     border: none;
     border-radius: 12px;
+  
     padding: 14px 20px;
-    margin-top: 40px;
     font-size: 16px;
     font-weight: 600;
+  
     cursor: pointer;
+  
     box-shadow: 0 6px 14px rgba(0, 0, 0, 0.12);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
   }
   
+  
   /* Hover effect */
   .download-btn:hover {
-    transform: translateY(-1px);
+    transform: translateY(1px);
     box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
   }
   
@@ -107,5 +186,33 @@
     background-color: #ddd;
     cursor: not-allowed;
     box-shadow: none;
+  }
+  
+  .panel-spacer {
+    flex-grow: 1;
+  }
+  
+  /* Home button */
+  .home-btn {
+    width: 100%;
+  
+    background: transparent;
+    color: #ffffffcc;
+  
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 12px;
+  
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: 600;
+  
+    cursor: pointer;
+  
+    transition: all 0.2s ease;
+  }
+  
+  .home-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
   }
   
